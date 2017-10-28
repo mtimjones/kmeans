@@ -57,17 +57,13 @@ void Write_Dataset( int Samples )
    return;
 }
 
-void Assignment( int Samples )
+void Initialization( int Samples )
 {
-   void UpdateCentroids( int Samples );
-
    // Assign each observation to a random cluster.
    for ( int Target = 0 ; Target < Samples ; Target++ )
    {
       Observations[ Target ].class = getRand( K );
    }
-
-   UpdateCentroids( Samples );
 
    return;
 }
@@ -110,7 +106,7 @@ int FindNearestCluster( int Index )
    return NearestCluster;
 }
 
-void UpdateCentroids( int Samples )
+void Update( int Samples )
 {
    int MembershipCount[ K ];
 
@@ -144,7 +140,7 @@ void UpdateCentroids( int Samples )
 }
 
 
-int Update( int Samples )
+int Assignment( int Samples )
 {
    int Moved = 0;
 
@@ -160,8 +156,6 @@ int Update( int Samples )
       }
 
    }
-
-   UpdateCentroids( Samples );
 
    return Moved;
 }
@@ -181,11 +175,14 @@ int main( int argc, char *argv[] )
    // Read the input dataset from the file.
    Samples = Read_Dataset( argv[1] );
 
-   // Assignment step, initialize observations to clusters.
-   Assignment( Samples );
+   // Initialization step, initialize observations to clusters.
+   Initialization( Samples );
 
    // Update step, continue to perform until convergence.
-   while ( Update( Samples ) );
+   do
+   {
+      Update( Samples );
+   } while ( Assignment( Samples ) );
 
    // Write the dataset back out.
    Write_Dataset( Samples );
